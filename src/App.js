@@ -6,12 +6,6 @@ const dataClass = [
   { id: 2, name: "English 202", teacher: "Ms. Johnson" },
   { id: 3, name: "Physics 303", teacher: "Dr. Brown" },
   { id: 4, name: "Chemistry 404", teacher: "Ms. Davis" },
-  { id: 5, name: "Biology 505", teacher: "Mr. Miller" },
-  { id: 6, name: "History 101", teacher: "Mrs. Wilson" },
-  { id: 7, name: "Geography 202", teacher: "Mr. Moore" },
-  { id: 8, name: "Computer Science", teacher: "Dr. Taylor" },
-  { id: 9, name: "Art & Design", teacher: "Ms. Anderson" },
-  { id: 10, name: "Music 101", teacher: "Mr. Thomas" },
 ];
 
 const dataStudent = [
@@ -19,12 +13,12 @@ const dataStudent = [
   { id: 2, name: "Bob", classId: 2, age: 19, score: 7.5 },
   { id: 3, name: "Charlie", classId: 3, age: 18, score: 6.8 },
   { id: 4, name: "David", classId: 4, age: 20, score: 8.0 },
-  { id: 5, name: "Eve", classId: 5, age: 18, score: 9.1 },
-  { id: 6, name: "Frank", classId: 6, age: 19, score: 7.0 },
-  { id: 7, name: "Grace", classId: 7, age: 21, score: 8.5 },
-  { id: 8, name: "Hannah", classId: 8, age: 20, score: 6.4 },
-  { id: 9, name: "Isaac", classId: 9, age: 18, score: 7.2 },
-  { id: 10, name: "Jack", classId: 10, age: 19, score: 8.8 },
+  { id: 5, name: "Eve", classId: 1, age: 18, score: 9.1 },
+  { id: 6, name: "Frank", classId: 2, age: 19, score: 7.0 },
+  { id: 7, name: "Grace", classId: 3, age: 21, score: 8.5 },
+  { id: 8, name: "Hannah", classId: 4, age: 20, score: 6.4 },
+  { id: 9, name: "Isaac", classId: 1, age: 18, score: 7.2 },
+  { id: 10, name: "Jack", classId: 2, age: 19, score: 8.8 },
 ];
 
 function App() {
@@ -44,8 +38,13 @@ function App() {
   }, [students]);
 
   const handleAdd = (type, data) => {
-    if (type === "class") setClasses([...classes, { ...data, id: classes.length + 1 }]);
-    else if (type === "student") setStudents([...students, { ...data, id: students.length + 1 }]);
+    if (type === "class") {
+      const newId = Math.max(0, ...classes.map(c => c.id)) + 1;
+      setClasses([...classes, { ...data, id: newId }]);
+    } else if (type === "student") {
+      const newId = Math.max(0, ...students.map(s => s.id)) + 1;
+      setStudents([...students, { ...data, id: newId }]);
+    }
   };
 
   const handleEdit = (type, index, data) => {
