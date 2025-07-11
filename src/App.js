@@ -77,7 +77,7 @@ function App() {
   return (
     <div>
       <h2>Danh sách lớp học</h2>
-      <div className="controls-wrapper center">
+      <div className="controls-wrapper">
         <SearchClass searched={searchedClass} setSearched={setSearchedClass} />
       </div>
       <ClassList {...{ classes: filteredClasses, handleAdd, handleEdit, handleDelete }} />
@@ -85,11 +85,11 @@ function App() {
       <h2>Danh sách học sinh</h2>
       <div className="controls-wrapper">
         <div style={{ flexGrow: 1 }}>
-          <BestStudents {...{ topStudents, handleBestStudents }} />
+          <SortScore {...{ handleSort, sortAsc }} /> 
         </div>
         <div style={{ display: 'flex', gap: '10px' }}>
           <SearchStudent {...{ searched: searchedStudent, setSearched: setSearchedStudent }} />
-          <SortScore {...{ handleSort, sortAsc }} />
+         <BestStudents {...{ topStudents, handleBestStudents }} />
         </div>
       </div>
       <StudentList

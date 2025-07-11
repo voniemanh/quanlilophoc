@@ -56,17 +56,11 @@ h1, h2 {
 
 .controls-wrapper {
   width: 90%;
-  max-width: 1000px;
   margin: 0 auto 20px;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.controls-wrapper.center {
   justify-content: center;
+  align-items: center;
+  gap: 10px;
 }
 
 table {
@@ -102,6 +96,7 @@ button {
   border: none;
   border-radius: 4px;
   margin: 0 2px;
+  color: #fff;
 }
 
 .btn-add {
