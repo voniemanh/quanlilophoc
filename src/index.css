@@ -18,7 +18,8 @@ h1, h2 {
   padding: 20px;
 }
 
-.input-group {
+.input-group,
+.input-group.full-width {
   display: flex;
   gap: 10px;
   margin: 20px 0;
@@ -38,11 +39,11 @@ h1, h2 {
 .input-group input:focus,
 .input-group select:focus {
   outline: none;
-  border-color:  #2b6eb5;
+  border-color: #2b6eb5;
 }
 
 .input-group button {
-  background-color:  #2b6eb5;
+  background-color: #2b6eb5;
   color: white;
   border: none;
   cursor: pointer;
@@ -51,6 +52,21 @@ h1, h2 {
 
 .input-group button:hover {
   background-color: #0056b3;
+}
+
+.controls-wrapper {
+  width: 90%;
+  max-width: 1000px;
+  margin: 0 auto 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.controls-wrapper.center {
+  justify-content: center;
 }
 
 table {
@@ -88,6 +104,10 @@ button {
   margin: 0 2px;
 }
 
+.btn-add {
+  background-color: #2b6eb5;
+}
+
 .btn-add:hover {
   opacity: 0.75;
 }
@@ -95,12 +115,19 @@ button {
 button:active {
   transform: scale(0.98);
 }
-.btn-group{
+
+.btn-group {
   display: flex;
   justify-content: space-evenly;
   border-top: none;
   border-left: none;
 }
+
+.btn-group button {
+  background-color: #888;
+  color: white;
+}
+
 .btn-group button:hover {
   background-color: #6e6d6d;
   cursor: pointer;

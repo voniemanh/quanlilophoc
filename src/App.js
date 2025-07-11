@@ -28,17 +28,15 @@ const dataStudent = [
 ];
 
 function App() {
-  const [classes, setClasses] = useState(() => {
-  const stored = localStorage.getItem("classes");
-  return stored ? JSON.parse(stored) : dataClass;
-  });
-  const [students, setStudents] = useState(() => {
-    const stored = localStorage.getItem("students");
-    return stored ? JSON.parse(stored) : dataStudent;
-  });
+  const [classes, setClasses] = useState(() => JSON.parse(localStorage.getItem("classes")) || dataClass);
+  const [students, setStudents] = useState(() => JSON.parse(localStorage.getItem("students")) || dataStudent);
+  const [sortAsc, setSortAsc] = useState(true);
+  const [searchedStudent, setSearchedStudent] = useState('');
+  const [searchedClass, setSearchedClass] = useState('');
+  const [topStudents, setTopStudents] = useState([]);
 
   useEffect(() => {
-  localStorage.setItem("classes", JSON.stringify(classes));
+    localStorage.setItem("classes", JSON.stringify(classes));
   }, [classes]);
 
   useEffect(() => {
@@ -46,55 +44,70 @@ function App() {
   }, [students]);
 
   const handleAdd = (type, data) => {
-    if (type === "class") {
-      setClasses([...classes, { ...data, id: (classes.length+1)}]);
-    } else if (type === "student") {
-      setStudents([...students, { ...data, id:(students.length+1) }]);
-    }
+    if (type === "class") setClasses([...classes, { ...data, id: classes.length + 1 }]);
+    else if (type === "student") setStudents([...students, { ...data, id: students.length + 1 }]);
   };
 
   const handleEdit = (type, index, data) => {
-    if (type === "class") {
-      const updated = [...classes];
-      updated[index] = data;
-      setClasses(updated);
-    } else if (type === "student") {
-      const updated = [...students];
-      updated[index] = data;
-      setStudents(updated);
-    }
+    const updated = type === "class" ? [...classes] : [...students];
+    updated[index] = data;
+    type === "class" ? setClasses(updated) : setStudents(updated);
   };
 
   const handleDelete = (type, index) => {
-    if (type === "class") {
-      const updated = [...classes];
-      updated.splice(index, 1);
-      setClasses(updated);
-    } else if (type === "student") {
-      const updated = [...students];
-      updated.splice(index, 1);
-      setStudents(updated);
-    }
+    const updated = type === "class" ? [...classes] : [...students];
+    updated.splice(index, 1);
+    type === "class" ? setClasses(updated) : setStudents(updated);
   };
+
+  const handleSort = () => {
+    const sorted = [...students].sort((a, b) => sortAsc ? a.score - b.score : b.score - a.score);
+    setSortAsc(!sortAsc);
+    setStudents(sorted);
+  };
+
+  const handleBestStudents = () => {
+    if (topStudents.length > 0) setTopStudents([]);
+    else setTopStudents([...students].sort((a, b) => b.score - a.score).slice(0, 3));
+  };
+
+  const filteredStudents = students.filter(s => s.name.toLowerCase().includes(searchedStudent.toLowerCase()));
+  const filteredClasses = classes.filter(c => c.name.toLowerCase().includes(searchedClass.toLowerCase()));
 
   return (
     <div>
       <h2>Danh sách lớp học</h2>
-      <ClassList classes={classes} onAdd={handleAdd} onEdit={handleEdit} onDelete={handleDelete} />
+      <div className="controls-wrapper center">
+        <SearchClass searched={searchedClass} setSearched={setSearchedClass} />
+      </div>
+      <ClassList {...{ classes: filteredClasses, handleAdd, handleEdit, handleDelete }} />
+
       <h2>Danh sách học sinh</h2>
-      <StudentList students={students} classes={classes} onAdd={handleAdd} onEdit={handleEdit} onDelete={handleDelete} />
+      <div className="controls-wrapper">
+        <div style={{ flexGrow: 1 }}>
+          <BestStudents {...{ topStudents, handleBestStudents }} />
+        </div>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <SearchStudent {...{ searched: searchedStudent, setSearched: setSearchedStudent }} />
+          <SortScore {...{ handleSort, sortAsc }} />
+        </div>
+      </div>
+      <StudentList
+        students={topStudents.length > 0 ? topStudents : filteredStudents}
+        {...{ classes, handleAdd, handleEdit, handleDelete }}
+      />
     </div>
   );
 }
 
-function ClassList({ classes, onAdd, onEdit, onDelete }) {
+function ClassList({ classes, handleAdd, handleEdit, handleDelete }) {
   const [newClass, setNewClass] = useState({ name: "", teacher: "" });
   const [editIndex, setEditIndex] = useState(null);
   const [editData, setEditData] = useState({ name: "", teacher: "" });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onAdd("class", newClass);
+    handleAdd("class", newClass);
     setNewClass({ name: "", teacher: "" });
   };
 
@@ -134,11 +147,11 @@ function ClassList({ classes, onAdd, onEdit, onDelete }) {
               </td>
               <td className='btn-group'>
                 {editIndex === index ? (
-                  <button onClick={() => { onEdit("class", index, { ...cls, ...editData }); setEditIndex(null); }}>Lưu</button>
+                  <button onClick={() => { handleEdit("class", index, { ...cls, ...editData }); setEditIndex(null); }}>Lưu</button>
                 ) : (
                   <button onClick={() => { setEditIndex(index); setEditData({ name: cls.name, teacher: cls.teacher }); }}>Sửa</button>
                 )}
-                <button onClick={() => onDelete("class", index)}>Xoá</button>
+                <button onClick={() => handleDelete("class", index)}>Xoá</button>
               </td>
             </tr>
           ))}
@@ -148,14 +161,22 @@ function ClassList({ classes, onAdd, onEdit, onDelete }) {
   );
 }
 
-function StudentList({ students, classes, onAdd, onEdit, onDelete }) {
+function StudentList({ students, classes, handleAdd, handleEdit, handleDelete }) {
   const [newStudent, setNewStudent] = useState({ name: "", age: "", score: "", classId: "" });
   const [editIndex, setEditIndex] = useState(null);
   const [editData, setEditData] = useState({ name: "", age: "", score: "", classId: "" });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onAdd("student", { ...newStudent, classId: parseInt(newStudent.classId) });
+    const { name, age, score, classId } = newStudent;
+    if (!name || !age || !score || !classId) return;
+
+    handleAdd("student", {
+      ...newStudent,
+      age: parseInt(age),
+      score: parseFloat(score),
+      classId: parseInt(classId)
+    });
     setNewStudent({ name: "", age: "", score: "", classId: "" });
   };
 
@@ -222,9 +243,12 @@ function StudentList({ students, classes, onAdd, onEdit, onDelete }) {
                 <td>{classInfo?.teacher || "Unknown"}</td>
                 <td className='btn-group'>
                   {editIndex === index ? (
-                    <button onClick={() => { onEdit("student", index, { ...student, ...editData }); setEditIndex(null); }}>Lưu</button>
+                    <button type="button" onClick={() => {
+                      handleEdit("student", index, { ...student, ...editData });
+                      setEditIndex(null);
+                    }}>Lưu</button>
                   ) : (
-                    <button onClick={() => {
+                    <button type="button" onClick={() => {
                       setEditIndex(index);
                       setEditData({
                         name: student.name,
@@ -234,7 +258,7 @@ function StudentList({ students, classes, onAdd, onEdit, onDelete }) {
                       });
                     }}>Sửa</button>
                   )}
-                  <button onClick={() => onDelete("student", index)}>Xoá</button>
+                  <button type="button" onClick={() => handleDelete("student", index)}>Xoá</button>
                 </td>
               </tr>
             );
@@ -242,6 +266,49 @@ function StudentList({ students, classes, onAdd, onEdit, onDelete }) {
         </tbody>
       </table>
     </>
+  );
+}
+
+
+function BestStudents({ topStudents, handleBestStudents }) {
+  return (
+    <button onClick={handleBestStudents} className="btn-add">
+      {topStudents.length > 0 ? "Hiện tất cả học sinh" : "3 học sinh có điểm cao nhất"}
+    </button>
+  );
+}
+
+function SortScore({ handleSort, sortAsc }) {
+  return (
+    <button onClick={handleSort} className="btn-add">
+      Sắp xếp theo điểm {sortAsc ? '↑' : '↓'}
+    </button>
+  );
+}
+
+function SearchStudent({ searched, setSearched }) {
+  return (
+    <div>
+      <input
+        type="text"
+        placeholder="Tìm học sinh"
+        value={searched}
+        onChange={(e) => setSearched(e.target.value)}
+      />
+    </div>
+  );
+}
+
+function SearchClass({ searched, setSearched }) {
+  return (
+    <div>
+      <input
+        type="text"
+        placeholder="Tìm lớp học"
+        value={searched}
+        onChange={(e) => setSearched(e.target.value)}
+      />
+    </div>
   );
 }
 
