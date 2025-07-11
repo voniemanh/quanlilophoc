@@ -79,7 +79,7 @@ function App() {
 
   return (
     <div>
-      <h1>Danh sách lớp học</h1>
+      <h2>Danh sách lớp học</h2>
       <ClassList classes={classes} onAdd={handleAdd} onEdit={handleEdit} onDelete={handleDelete} />
       <h2>Danh sách học sinh</h2>
       <StudentList students={students} classes={classes} onAdd={handleAdd} onEdit={handleEdit} onDelete={handleDelete} />
