@@ -289,6 +289,7 @@ function SearchStudent({ searched, setSearched }) {
   return (
     <div>
       <input
+       className='input-style'
         type="text"
         placeholder="Tìm học sinh"
         value={searched}
@@ -302,6 +303,7 @@ function SearchClass({ searched, setSearched }) {
   return (
     <div>
       <input
+      className='input-style'
         type="text"
         placeholder="Tìm lớp học"
         value={searched}
