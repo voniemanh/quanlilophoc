@@ -38,11 +38,11 @@ h1, h2 {
 .input-group input:focus,
 .input-group select:focus {
   outline: none;
-  border-color: #007bff;
+  border-color:  #2b6eb5;
 }
 
 .input-group button {
-  background-color: #007bff;
+  background-color:  #2b6eb5;
   color: white;
   border: none;
   cursor: pointer;
@@ -54,20 +54,22 @@ h1, h2 {
 }
 
 table {
-  width: 100%;
-  border-collapse: collapse;
+  width: 90%;
   margin-bottom: 30px;
+  text-align: center;
+  margin: 0 auto 30px;
+  border-collapse: collapse;
 }
 
 table th,
 table td {
-  border: 1px solid #ccc;
   padding: 10px;
   text-align: left;
+  border: 1px solid #ccc;
 }
 
 table thead {
-  background-color: #007bff;
+  background-color: #2b6eb5;
   color: white;
 }
 
@@ -86,10 +88,20 @@ button {
   margin: 0 2px;
 }
 
-button:hover {
-  opacity: 0.85;
+.btn-add:hover {
+  opacity: 0.75;
 }
 
 button:active {
   transform: scale(0.98);
+}
+.btn-group{
+  display: flex;
+  justify-content: space-evenly;
+  border-top: none;
+  border-left: none;
+}
+.btn-group button:hover {
+  background-color: #6e6d6d;
+  cursor: pointer;
 }

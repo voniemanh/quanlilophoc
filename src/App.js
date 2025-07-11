@@ -103,7 +103,7 @@ function ClassList({ classes, onAdd, onEdit, onDelete }) {
       <form className="input-group" onSubmit={handleSubmit}>
         <input value={newClass.name} onChange={(e) => setNewClass({ ...newClass, name: e.target.value })} placeholder="Tên lớp" />
         <input value={newClass.teacher} onChange={(e) => setNewClass({ ...newClass, teacher: e.target.value })} placeholder="Giáo viên" />
-        <button type="submit">Thêm</button>
+        <button className='btn-add' type="submit">Thêm</button>
       </form>
       <table>
         <thead>
@@ -111,7 +111,7 @@ function ClassList({ classes, onAdd, onEdit, onDelete }) {
             <th>ID</th>
             <th>Tên lớp</th>
             <th>Giáo viên</th>
-            <th colSpan="2"></th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -132,14 +132,14 @@ function ClassList({ classes, onAdd, onEdit, onDelete }) {
                   cls.teacher
                 )}
               </td>
-              <td>
+              <td className='btn-group'>
                 {editIndex === index ? (
                   <button onClick={() => { onEdit("class", index, { ...cls, ...editData }); setEditIndex(null); }}>Lưu</button>
                 ) : (
                   <button onClick={() => { setEditIndex(index); setEditData({ name: cls.name, teacher: cls.teacher }); }}>Sửa</button>
                 )}
+                <button onClick={() => onDelete("class", index)}>Xoá</button>
               </td>
-              <td><button onClick={() => onDelete("class", index)}>Xoá</button></td>
             </tr>
           ))}
         </tbody>
@@ -169,7 +169,7 @@ function StudentList({ students, classes, onAdd, onEdit, onDelete }) {
           <option value="">Chọn lớp</option>
           {classes.map((cls) => <option key={cls.id} value={cls.id}>{cls.name}</option>)}
         </select>
-        <button type="submit">Thêm</button>
+        <button className='btn-add' type="submit">Thêm</button>
       </form>
       <table>
         <thead>
@@ -180,7 +180,7 @@ function StudentList({ students, classes, onAdd, onEdit, onDelete }) {
             <th>Điểm</th>
             <th>Lớp</th>
             <th>Giáo viên</th>
-            <th colSpan="2"></th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -220,7 +220,7 @@ function StudentList({ students, classes, onAdd, onEdit, onDelete }) {
                   )}
                 </td>
                 <td>{classInfo?.teacher || "Unknown"}</td>
-                <td>
+                <td className='btn-group'>
                   {editIndex === index ? (
                     <button onClick={() => { onEdit("student", index, { ...student, ...editData }); setEditIndex(null); }}>Lưu</button>
                   ) : (
@@ -234,8 +234,8 @@ function StudentList({ students, classes, onAdd, onEdit, onDelete }) {
                       });
                     }}>Sửa</button>
                   )}
+                  <button onClick={() => onDelete("student", index)}>Xoá</button>
                 </td>
-                <td><button onClick={() => onDelete("student", index)}>Xoá</button></td>
               </tr>
             );
           })}
