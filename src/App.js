@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './index.css';
 
 const dataClass = [
@@ -12,16 +12,6 @@ const dataClass = [
   { id: 8, name: "Computer Science", teacher: "Dr. Taylor" },
   { id: 9, name: "Art & Design", teacher: "Ms. Anderson" },
   { id: 10, name: "Music 101", teacher: "Mr. Thomas" },
-  { id: 11, name: "PE 101", teacher: "Coach Lee" },
-  { id: 12, name: "Literature", teacher: "Mrs. Harris" },
-  { id: 13, name: "Philosophy", teacher: "Dr. Clark" },
-  { id: 14, name: "Economics", teacher: "Mr. Lewis" },
-  { id: 15, name: "Psychology", teacher: "Dr. Young" },
-  { id: 16, name: "Sociology", teacher: "Ms. Hall" },
-  { id: 17, name: "Business", teacher: "Mr. Allen" },
-  { id: 18, name: "Law", teacher: "Mrs. King" },
-  { id: 19, name: "Statistics", teacher: "Dr. Wright" },
-  { id: 20, name: "Environmental Science", teacher: "Ms. Scott" }
 ];
 
 const dataStudent = [
@@ -35,21 +25,25 @@ const dataStudent = [
   { id: 8, name: "Hannah", classId: 8, age: 20, score: 6.4 },
   { id: 9, name: "Isaac", classId: 9, age: 18, score: 7.2 },
   { id: 10, name: "Jack", classId: 10, age: 19, score: 8.8 },
-  { id: 11, name: "Karen", classId: 11, age: 18, score: 6.9 },
-  { id: 12, name: "Leo", classId: 12, age: 20, score: 9.0 },
-  { id: 13, name: "Mia", classId: 13, age: 21, score: 7.7 },
-  { id: 14, name: "Nathan", classId: 14, age: 22, score: 6.5 },
-  { id: 15, name: "Olivia", classId: 15, age: 18, score: 8.9 },
-  { id: 16, name: "Paul", classId: 16, age: 20, score: 7.3 },
-  { id: 17, name: "Quinn", classId: 17, age: 19, score: 8.4 },
-  { id: 18, name: "Rachel", classId: 18, age: 21, score: 9.2 },
-  { id: 19, name: "Sam", classId: 19, age: 20, score: 6.7 },
-  { id: 20, name: "Tina", classId: 20, age: 18, score: 8.1 }
 ];
 
 function App() {
-  const [classes, setClasses] = useState(dataClass);
-  const [students, setStudents] = useState(dataStudent);
+  const [classes, setClasses] = useState(() => {
+  const stored = localStorage.getItem("classes");
+  return stored ? JSON.parse(stored) : dataClass;
+  });
+  const [students, setStudents] = useState(() => {
+    const stored = localStorage.getItem("students");
+    return stored ? JSON.parse(stored) : dataStudent;
+  });
+
+  useEffect(() => {
+  localStorage.setItem("classes", JSON.stringify(classes));
+  }, [classes]);
+
+  useEffect(() => {
+    localStorage.setItem("students", JSON.stringify(students));
+  }, [students]);
 
   const handleAdd = (type, data) => {
     if (type === "class") {
